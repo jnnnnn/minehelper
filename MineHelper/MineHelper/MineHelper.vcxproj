@@ -142,7 +142,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MineGrid.h" />
     <ClInclude Include="Outputter.h" />
+    <ClInclude Include="RawBitmap.h" />
     <ClInclude Include="Recognizer.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Solver.h" />
@@ -150,8 +152,10 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MineGrid.cpp" />
     <ClCompile Include="MineHelper.cpp" />
     <ClCompile Include="Outputter.cpp" />
+    <ClCompile Include="RawBitmap.cpp" />
     <ClCompile Include="Recognizer.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Solver.cpp" />

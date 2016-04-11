@@ -36,6 +36,12 @@
     <ClInclude Include="Outputter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RawBitmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MineGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -54,6 +60,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Outputter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RawBitmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MineGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

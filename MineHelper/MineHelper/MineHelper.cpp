@@ -4,11 +4,16 @@
 #include "stdafx.h"
 
 #include "Screen.h"
+#include "Recognizer.h"
+
 #include <stdio.h>
 
 int main() {
   Screen s;
-  s.GetScreenBitmap("Nothing");
+  std::shared_ptr<RawBitmap> bitmap = s.GetScreenBitmap();
+  Recognizer r;
+  auto grid = r.Recognize(bitmap);
+
   std::string str;
   cin >> str;
 }
