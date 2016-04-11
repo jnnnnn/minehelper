@@ -11,6 +11,7 @@
 int main() {
   Screen s;
   std::shared_ptr<RawBitmap> bitmap = s.GetScreenBitmap();
+  bitmap->SaveBitmap("test.bmp");
   Recognizer r;
   auto grid = r.Recognize(bitmap);
 

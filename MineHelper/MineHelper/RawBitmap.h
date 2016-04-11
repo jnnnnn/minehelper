@@ -52,4 +52,6 @@ struct RawBitmap {
     }
     return true;
   }
+
+  void SaveBitmap(string filename);
 };

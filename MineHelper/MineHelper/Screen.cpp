@@ -49,7 +49,6 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
   if (!BitBlt(hdcMemDC, 0, 0, result->Width, result->Height, hdcWindow, 0, 0,
               SRCCOPY))
     goto done;
-  SelectObject(hdcMemDC, hOld);
 
   BITMAPINFOHEADER bi;
   bi.biBitCount = 32;
@@ -67,7 +66,8 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
   result->bits.reset(new BYTE[4 * result->Width * result->Height]);
   GetDIBits(hdcWindow, hbmWindow, 0, result->Height, screenData.get(),
             (BITMAPINFO *)&bi, DIB_RGB_COLORS);
-  
+
+  SelectObject(hdcMemDC, hOld);
 done:
   ReleaseDC(hwndTarget, hdcWindow);
   DeleteObject(hbmWindow);
