@@ -9,7 +9,6 @@ void RawBitmap::SaveBitmap(string filename) {
   int x;
   int y;
   int n;
-  int red, green, blue;
 
   // How many bytes of padding to add to each horizontal line - the size of
   // which must be a multiple of 4 bytes.
@@ -73,12 +72,12 @@ void RawBitmap::SaveBitmap(string filename) {
 
   // Headers done, now write the data...
   // BMP image format is written from bottom to top...
-  for (y = Height - 1; y >= 0; y--) {
+  for (y = 0; y < Height; y++) {
     for (x = 0; x < Width; x++) {
       // Also, it's written in (b,g,r) format...
-      fprintf(outfile, "%c", PosB(x, y));
-      fprintf(outfile, "%c", PosG(x, y));
-      fprintf(outfile, "%c", PosR(x, y));
+      fprintf(outfile, "%c", PosB(x,y));
+      fprintf(outfile, "%c", PosG(x,y));
+      fprintf(outfile, "%c", PosR(x,y));
     }
     // See above - BMP lines must be of lengths divisible by 4.
     if (extrabytes) 
