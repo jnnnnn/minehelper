@@ -1,2 +1,7 @@
-MineHelper/Release/*
-MineHelper/Debug/*
+*Release*
+*Debug*
+Minehelper/*.bmp
+MineHelper.sdf
+MineHelper.VC.opendb
+.vs/*
+ipch/*
