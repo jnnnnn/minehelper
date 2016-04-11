@@ -15,8 +15,7 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
           wstring sWindowText = wstring((wchar_t *)(lpString));
           const wregex re_chrome(_T("(Minefield, HTML5 Massively Multiplayer Online Minesweeper)"));
           wsmatch match;
-          if (regex_search(sWindowText, match, re_chrome) &&
-              match.size() > 1) {
+          if (regex_search(sWindowText, match, re_chrome) && match.size() > 1) {
             hwndTarget = hwnd;
             return false; // stop iteration
           } else
@@ -28,7 +27,6 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
   HDC hdcWindow;
   HDC hdcMemDC = NULL;
   HBITMAP hbmWindow = NULL;
-  unique_ptr<BYTE[]> screenData;
   shared_ptr<RawBitmap> result(new RawBitmap());
 
   hdcWindow = GetDC(hwndTarget);
@@ -49,7 +47,7 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
   if (!BitBlt(hdcMemDC, 0, 0, result->Width, result->Height, hdcWindow, 0, 0,
               SRCCOPY))
     goto done;
-
+  
   BITMAPINFOHEADER bi;
   bi.biBitCount = 32;
   bi.biClrImportant = 0;
@@ -64,14 +62,15 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
   bi.biYPelsPerMeter = 0;
 
   result->bits.reset(new BYTE[4 * result->Width * result->Height]);
-  GetDIBits(hdcWindow, hbmWindow, 0, result->Height, screenData.get(),
+  GetDIBits(hdcWindow, hbmWindow, 0, result->Height, result->bits.get(),
             (BITMAPINFO *)&bi, DIB_RGB_COLORS);
 
   SelectObject(hdcMemDC, hOld);
+
 done:
-  ReleaseDC(hwndTarget, hdcWindow);
   DeleteObject(hbmWindow);
   DeleteObject(hdcMemDC);
+  ReleaseDC(hwndTarget, hdcWindow);
 
   return result;
 }
