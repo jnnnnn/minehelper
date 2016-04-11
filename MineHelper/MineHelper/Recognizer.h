@@ -10,6 +10,6 @@ public:
 	shared_ptr<MineGrid> Recognize(shared_ptr<RawBitmap> bitmap);
 
 protected:
-	shared_ptr<RawBitmap> GridIntersect;
+	shared_ptr<RawBitmap> GridCorner;
 };
 

@@ -8,13 +8,18 @@
 
 #include <stdio.h>
 
-int main() {
-  Screen s;
-  std::shared_ptr<RawBitmap> bitmap = s.GetScreenBitmap();
-  bitmap->SaveBitmap("test.bmp");
-  Recognizer r;
-  auto grid = r.Recognize(bitmap);
+#include <chrono>
+#include <thread>
 
-  std::string str;
-  cin >> str;
+int main() {
+	while (1) {
+		Screen s;
+		std::shared_ptr<RawBitmap> bitmap = s.GetScreenBitmap();
+		//bitmap->SaveBitmap("test.bmp");
+		Recognizer r;
+		auto grid = r.Recognize(bitmap);
+		grid->PrintGrid();
+		
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 }

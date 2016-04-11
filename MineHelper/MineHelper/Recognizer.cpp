@@ -2,33 +2,31 @@
 #include "Recognizer.h"
 
 Recognizer::Recognizer() {
-  GridIntersect.reset(new RawBitmap());
-  GridIntersect->Width = 4;
-  GridIntersect->Height = 4;
-  GridIntersect->bits.reset(new BYTE[4 * 4 * 4]);
-  GridIntersect->SetA(0, 0, 0);
-  GridIntersect->SetGray(0, 1, 0);
-  GridIntersect->SetGray(0, 2, 0);
-  GridIntersect->SetA(0, 3, 0);
-  GridIntersect->SetGray(1, 0, 0);
-  GridIntersect->SetGray(1, 1, 255);
-  GridIntersect->SetGray(1, 2, 255);
-  GridIntersect->SetGray(1, 3, 0);
-  GridIntersect->SetGray(2, 0, 0);
-  GridIntersect->SetGray(2, 1, 255);
-  GridIntersect->SetGray(2, 2, 255);
-  GridIntersect->SetGray(2, 3, 0);
-  GridIntersect->SetA(3, 0, 0);
-  GridIntersect->SetGray(3, 1, 0);
-  GridIntersect->SetGray(3, 2, 0);
-  GridIntersect->SetA(3, 3, 0);
+  GridCorner.reset(new RawBitmap());
+  GridCorner->Width = 4;
+  GridCorner->Height = 4;
+  GridCorner->bits.reset(new BYTE[4 * 4 * 4]);
+  GridCorner->SetA(0, 0, 0);
+  GridCorner->SetGray(0, 1, 0);
+  GridCorner->SetGray(0, 2, 0);
+  GridCorner->SetA(0, 3, 0);
+  GridCorner->SetGray(1, 0, 0);
+  GridCorner->SetGray(1, 1, 255);
+  GridCorner->SetGray(1, 2, 255);
+  GridCorner->SetGray(1, 3, 0);
+  GridCorner->SetGray(2, 0, 0);
+  GridCorner->SetGray(2, 1, 255);
+  GridCorner->SetGray(2, 2, 255);
+  GridCorner->SetGray(2, 3, 0);
+  GridCorner->SetA(3, 0, 0);
+  GridCorner->SetGray(3, 1, 0);
+  GridCorner->SetGray(3, 2, 0);
+  GridCorner->SetA(3, 3, 0);
 }
 
 shared_ptr<MineGrid> Recognizer::Recognize(shared_ptr<RawBitmap> bitmap) {
-  auto result = shared_ptr<MineGrid>(new MineGrid());
 
-  // find the grid....
-  int offsetx = -1, offsety = -1;
+  auto result = shared_ptr<MineGrid>(new MineGrid());
 
   // start in the middle
   int x0 = bitmap->Width / 2;
@@ -38,17 +36,64 @@ shared_ptr<MineGrid> Recognizer::Recognize(shared_ptr<RawBitmap> bitmap) {
 
   for (int x = x0; x < x0 + GRID_SIZE; x++) {
     for (int y = y0; y < y0 + GRID_SIZE; y++) {
-      if (bitmap->Matches(x, x + GridIntersect->Width, y,
-                          y + GridIntersect->Height, *GridIntersect, 0, 0)) {
-		  offsetx = x % GRID_SIZE;
-		  offsety = y % GRID_SIZE;
-			break;
+      if (bitmap->Matches(x, x + GridCorner->Width, y, y + GridCorner->Height,
+                          *GridCorner, 0, 0)) {
+        // offset is difference between 0, 0 and top-left pixel of a square's
+        // border.
+        result->offsetx = (x + 1) % GRID_SIZE;
+        result->offsety = (y + 1) % GRID_SIZE;
+        break;
       }
     }
   }
 
-  cout << offsetx << offsety;
+  cout << result->offsetx << ", " << result->offsety;
 
   // match each cell
-  return nullptr;
+  int width = (bitmap->Width - result->offsetx - 17) / GRID_SIZE;
+  int height = (bitmap->Height - result->offsety - 15) / GRID_SIZE;
+  for (int cellx = 0; cellx < width; cellx++) {
+    for (int celly = 0; celly < height; celly++) {
+      int gray = bitmap->PosGray(cellx * GRID_SIZE + result->offsetx + 17,
+                                 celly * GRID_SIZE + result->offsety + 17);
+      /*
+	  bitmap->SavePartialBitmap("cell x.bmp",
+                                cellx * GRID_SIZE + result->offsetx,
+                                (cellx + 1) * GRID_SIZE + result->offsetx,
+                                celly * GRID_SIZE + result->offsety,
+                                (celly + 1) * GRID_SIZE + result->offsety);
+      */
+	  MineGrid::Cell cell;
+      switch (gray) {
+      case 219:
+        cell = MineGrid::Unclicked;
+        break;
+      case 97:
+        cell = MineGrid::Mine;
+        break;
+      case 255:
+        cell = MineGrid::Clear0;
+        break;
+      case 204:
+        cell = MineGrid::Clear1;
+        break;
+      case 170:
+        cell = MineGrid::Clear2;
+        break;
+      case 136:
+        cell = MineGrid::Clear3;
+        break;
+      case 102:
+        cell = MineGrid::Clear4;
+        break;
+      case 68:
+        cell = MineGrid::Clear5;
+        break;
+      default:
+        cell = MineGrid::Unknown;
+      }
+      result->SetCell(cellx, celly, cell);
+    }
+  }
+  return result;
 }
