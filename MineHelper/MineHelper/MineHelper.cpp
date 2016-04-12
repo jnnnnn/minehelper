@@ -6,6 +6,7 @@
 #include "Screen.h"
 #include "Recognizer.h"
 #include "Solver.h"
+#include "Outputter.h"
 
 #include <stdio.h>
 
@@ -21,8 +22,10 @@ int main() {
     auto grid = recognizer.Recognize(bitmap);
     Solver solver;
     solver.Solve(*grid);
-    grid->PrintGrid();
+    //grid->PrintGrid();
+	Outputter outputter;
+	outputter.Output(*grid);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }

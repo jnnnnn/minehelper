@@ -28,26 +28,41 @@ shared_ptr<MineGrid> Recognizer::Recognize(shared_ptr<RawBitmap> bitmap) {
 
   auto result = shared_ptr<MineGrid>(new MineGrid());
 
+  result->heightpx = bitmap->Height;
+  result->widthpx = bitmap->Width;
+
   // start in the middle
   int x0 = bitmap->Width / 2;
   int y0 = bitmap->Height / 2;
 
-  const int GRID_SIZE = 32;
-
   for (int x = x0; x < x0 + GRID_SIZE; x++) {
     for (int y = y0; y < y0 + GRID_SIZE; y++) {
-      if (bitmap->Matches(x, x + GridCorner->Width, y, y + GridCorner->Height,
-                          *GridCorner, 0, 0)) {
-        // offset is difference between 0, 0 and bottom-left pixel of a square's
-        // border.
-        result->offsetx = (x + 1) % GRID_SIZE;
-        result->offsety = (y + 1) % GRID_SIZE;
-        break;
-      }
+      int o = GRID_SIZE * 0;
+      if (!bitmap->Matches(x + o, x + o + GridCorner->Width, y + o,
+                           y + o + GridCorner->Height, *GridCorner, 0, 0))
+        continue;
+      o = GRID_SIZE * 1;
+      if (!bitmap->Matches(x + o, x + o + GridCorner->Width, y + o,
+                           y + o + GridCorner->Height, *GridCorner, 0, 0))
+        continue;
+      o = GRID_SIZE * 2;
+      if (!bitmap->Matches(x + o, x + o + GridCorner->Width, y + o,
+                           y + o + GridCorner->Height, *GridCorner, 0, 0))
+        continue;
+      o = GRID_SIZE * 3;
+      if (!bitmap->Matches(x + o, x + o + GridCorner->Width, y + o,
+                           y + o + GridCorner->Height, *GridCorner, 0, 0))
+        continue;
+
+      // offset is difference between 0, 0 and bottom-left pixel of a square's
+      // border.
+      result->offsetx = (x + 1) % GRID_SIZE;
+      result->offsety = (y + 1) % GRID_SIZE;
+      break;
     }
   }
 
-  cout << result->offsetx << ", " << result->offsety;
+  cout << result->offsetx << ", " << result->offsety << "\r\n";
 
   // match each cell
   int width = (bitmap->Width - result->offsetx - 17) / GRID_SIZE;

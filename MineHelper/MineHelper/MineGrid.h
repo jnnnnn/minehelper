@@ -2,6 +2,8 @@
 
 #include <vector>
 
+extern const int GRID_SIZE;
+
 struct MineGrid {
   enum Cell {
     Clear0 = 0,
@@ -32,8 +34,9 @@ struct MineGrid {
   Cell cells[10000]; // 100x100. Normal screen is 60x50.
   int offsetx = -1;
   int offsety = -1;
-  int width = 0;  // number of cells across which are filled in
-  int height = 0; // number of cells up which are filled in
-
+  int width = 0;    // number of cells across which are filled in
+  int height = 0;   // number of cells up which are filled in
+  int widthpx = 0;  // original size of the window this grid was resolved from
+  int heightpx = 0; // original size of the window this grid was resolved from
   void PrintGrid() const;
 };

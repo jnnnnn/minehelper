@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "MineGrid.h"
 
+const int GRID_SIZE = 32;
+
 void MineGrid::PrintGrid() const {
   cout << "\r\n";
   for (int y = height - 1; y >= 0; y--) {

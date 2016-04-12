@@ -13,7 +13,8 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
               (LPVOID)NULL, (DWORD)(1000 + 1), MEM_COMMIT, PAGE_READWRITE);
           ::GetWindowTextW(hwnd, lpString, 1000);
           wstring sWindowText = wstring((wchar_t *)(lpString));
-          const wregex re_chrome(_T("(Minefield, HTML5 Massively Multiplayer Online Minesweeper)"));
+          const wregex re_chrome(_T("(Minefield, HTML5 Massively Multiplayer ")
+                                 _T("Online Minesweeper)"));
           wsmatch match;
           if (regex_search(sWindowText, match, re_chrome) && match.size() > 1) {
             hwndTarget = hwnd;
@@ -24,10 +25,13 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
         0L);
   }
 
+  shared_ptr<RawBitmap> result(new RawBitmap());
+  if (!hwndTarget)
+    goto done;
+
   HDC hdcWindow;
   HDC hdcMemDC = NULL;
   HBITMAP hbmWindow = NULL;
-  shared_ptr<RawBitmap> result(new RawBitmap());
 
   hdcWindow = GetDC(hwndTarget);
   hdcMemDC = CreateCompatibleDC(hdcWindow);
@@ -36,8 +40,10 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
 
   RECT rcClient;
   GetClientRect(hwndTarget, &rcClient);
-  result->Width = rcClient.right - rcClient.left;
-  result->Height = rcClient.bottom - rcClient.top;
+  if (rcClient.right == rcClient.left)
+    goto done;
+
+  result->Clear(rcClient.right - rcClient.left, rcClient.bottom - rcClient.top);
 
   hbmWindow = CreateCompatibleBitmap(hdcWindow, result->Width, result->Height);
   if (!hbmWindow)
@@ -47,7 +53,7 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
   if (!BitBlt(hdcMemDC, 0, 0, result->Width, result->Height, hdcWindow, 0, 0,
               SRCCOPY))
     goto done;
-  
+
   BITMAPINFOHEADER bi;
   bi.biBitCount = 32;
   bi.biClrImportant = 0;
@@ -61,7 +67,6 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
   bi.biXPelsPerMeter = 0;
   bi.biYPelsPerMeter = 0;
 
-  result->bits.reset(new BYTE[4 * result->Width * result->Height]);
   GetDIBits(hdcWindow, hbmWindow, 0, result->Height, result->bits.get(),
             (BITMAPINFO *)&bi, DIB_RGB_COLORS);
 
