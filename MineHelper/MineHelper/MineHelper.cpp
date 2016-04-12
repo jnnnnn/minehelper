@@ -20,8 +20,7 @@ int main() {
     // bitmap->SaveBitmap("test.bmp");
     Recognizer recognizer;
     auto grid = recognizer.Recognize(bitmap);
-    Solver solver;
-    solver.Solve(*grid);
+    Solver::Solve(*grid);
     //grid->PrintGrid();
 	Outputter outputter;
 	outputter.Output(*grid);

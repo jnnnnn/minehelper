@@ -63,6 +63,9 @@ shared_ptr<MineGrid> Recognizer::Recognize(shared_ptr<RawBitmap> bitmap) {
   }
 
   cout << result->offsetx << ", " << result->offsety << "\r\n";
+  
+  if (result->offsetx == -1)
+	  return result;
 
   // match each cell
   int width = (bitmap->Width - result->offsetx - 17) / GRID_SIZE;
@@ -84,6 +87,7 @@ shared_ptr<MineGrid> Recognizer::Recognize(shared_ptr<RawBitmap> bitmap) {
         cell = MineGrid::Unclicked;
         break;
       case 97:
+	  case 0:
         cell = MineGrid::Mine;
         break;
       case 255:

@@ -10,11 +10,10 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
     ::EnumWindows(
         [](HWND hwnd, LPARAM lParam) -> BOOL {
           LPTSTR lpString = (LPTSTR)VirtualAlloc(
-              (LPVOID)NULL, (DWORD)(1000 + 1), MEM_COMMIT, PAGE_READWRITE);
+              (LPVOID)NULL, (DWORD)(2000 + 2), MEM_COMMIT, PAGE_READWRITE);
           ::GetWindowTextW(hwnd, lpString, 1000);
           wstring sWindowText = wstring((wchar_t *)(lpString));
-          const wregex re_chrome(_T("(Minefield, HTML5 Massively Multiplayer ")
-                                 _T("Online Minesweeper)"));
+          const wregex re_chrome(_T("(.i.e.ie...........a..i.e....u..i..a.e..O..i.e..i.e..ee.e.)"));
           wsmatch match;
           if (regex_search(sWindowText, match, re_chrome) && match.size() > 1) {
             hwndTarget = hwnd;

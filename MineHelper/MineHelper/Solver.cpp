@@ -21,7 +21,7 @@ void Solver::Solve(MineGrid &grid) {
       MineGrid::Cell c = grid.GetCell(x, y);
       result.mines += c == MineGrid::Mine || c == MineGrid::UnclickedMine;
       result.cleared += c <= MineGrid::Clear8 || c == MineGrid::UnclickedClear;
-      result.unknown += c == MineGrid::Unclicked;
+      result.unclicked += c == MineGrid::Unclicked;
     });
     return result;
   };
@@ -31,13 +31,13 @@ void Solver::Solve(MineGrid &grid) {
       for (int y = 1; y < grid.height - 1; y++) {
         auto neighbours = SumNeighbours(x, y);
         MineGrid::Cell c = grid.GetCell(x, y);
-        if (neighbours.unknown > 0) {
+        if (neighbours.unclicked > 0) {
           if (neighbours.mines == c) {
             ForEachNeighbour(x, y, [&](int xn, int yn) {
               if (grid.GetCell(xn, yn) == MineGrid::Unclicked)
                 grid.SetCell(xn, yn, MineGrid::UnclickedClear);
             });
-          } else if ((neighbours.unknown + neighbours.mines) == c) {
+          } else if ((neighbours.unclicked + neighbours.mines) == c) {
             ForEachNeighbour(x, y, [&](int xn, int yn) {
               if (grid.GetCell(xn, yn) == MineGrid::Unclicked)
                 grid.SetCell(xn, yn, MineGrid::UnclickedMine);

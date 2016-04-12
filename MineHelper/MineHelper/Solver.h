@@ -9,7 +9,7 @@ public:
   struct Neighbours {
     BYTE mines = 0;
     BYTE cleared = 0;
-    BYTE unknown = 0;
+    BYTE unclicked = 0;
   };
 
   static void Solve(MineGrid &grid);
