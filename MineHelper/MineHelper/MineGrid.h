@@ -19,7 +19,9 @@ struct MineGrid {
     Unclicked,
     Unknown,
     ClickGreen,
-    ClickRed
+    ClickRed,
+    UnclickedMine,
+    UnclickedClear
   };
 
   void SetCell(int x, int y, Cell v) {
