@@ -1,6 +1,7 @@
 #pragma once
-#include <algorithm>
 
+// In this structure's coordinate system, (0,0) is bottom left. So increasing y
+// goes up the screen and increasing x goes across to the right.
 struct RawBitmap {
 
   int Width = 0;

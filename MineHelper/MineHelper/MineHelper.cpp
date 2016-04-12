@@ -5,6 +5,7 @@
 
 #include "Screen.h"
 #include "Recognizer.h"
+#include "Solver.h"
 
 #include <stdio.h>
 
@@ -12,14 +13,16 @@
 #include <thread>
 
 int main() {
-	while (1) {
-		Screen s;
-		std::shared_ptr<RawBitmap> bitmap = s.GetScreenBitmap();
-		//bitmap->SaveBitmap("test.bmp");
-		Recognizer r;
-		auto grid = r.Recognize(bitmap);
-		grid->PrintGrid();
-		
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	}
+  while (1) {
+    Screen screen;
+    std::shared_ptr<RawBitmap> bitmap = screen.GetScreenBitmap();
+    // bitmap->SaveBitmap("test.bmp");
+    Recognizer recognizer;
+    auto grid = recognizer.Recognize(bitmap);
+    Solver solver;
+    solver.Solve(*grid);
+    grid->PrintGrid();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  }
 }

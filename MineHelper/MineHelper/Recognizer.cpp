@@ -38,7 +38,7 @@ shared_ptr<MineGrid> Recognizer::Recognize(shared_ptr<RawBitmap> bitmap) {
     for (int y = y0; y < y0 + GRID_SIZE; y++) {
       if (bitmap->Matches(x, x + GridCorner->Width, y, y + GridCorner->Height,
                           *GridCorner, 0, 0)) {
-        // offset is difference between 0, 0 and top-left pixel of a square's
+        // offset is difference between 0, 0 and bottom-left pixel of a square's
         // border.
         result->offsetx = (x + 1) % GRID_SIZE;
         result->offsety = (y + 1) % GRID_SIZE;
@@ -57,13 +57,13 @@ shared_ptr<MineGrid> Recognizer::Recognize(shared_ptr<RawBitmap> bitmap) {
       int gray = bitmap->PosGray(cellx * GRID_SIZE + result->offsetx + 17,
                                  celly * GRID_SIZE + result->offsety + 17);
       /*
-	  bitmap->SavePartialBitmap("cell x.bmp",
+          bitmap->SavePartialBitmap("cell x.bmp",
                                 cellx * GRID_SIZE + result->offsetx,
                                 (cellx + 1) * GRID_SIZE + result->offsetx,
                                 celly * GRID_SIZE + result->offsety,
                                 (celly + 1) * GRID_SIZE + result->offsety);
       */
-	  MineGrid::Cell cell;
+      MineGrid::Cell cell;
       switch (gray) {
       case 219:
         cell = MineGrid::Unclicked;

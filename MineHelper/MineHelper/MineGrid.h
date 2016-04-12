@@ -20,28 +20,20 @@ struct MineGrid {
     ClickRed
   };
 
-  void SetCell(int x, int y, Cell v) { cells[x * 100 + y] = v; }
-  Cell GetCell(int x, int y) const { return cells[x * 100 + y]; }
-
-  Cell cells[10000]; // 100x100
-  int offsetx = -1;
-  int offsety = -1;
-
-  void PrintGrid() {
-    cout << "\r\n";
-    for (int y = 40; y >= 0; y--) {
-      for (int x = 0; x < 40; x++) {
-        Cell cell = GetCell(x, y);
-        if (cell < 9)
-          cout << GetCell(x, y);
-        else if (cell == Mine)
-          cout << "!";
-        else if (cell == Unclicked)
-          cout << ".";
-        else
-          cout << "?";
-      }
-      cout << "\r\n";
+  void SetCell(int x, int y, Cell v) {
+    cells[x * 100 + y] = v;
+    if (v != Unknown) {
+      width = max(x, width);
+      height = max(y, height);
     }
   }
+  Cell GetCell(int x, int y) const { return cells[x * 100 + y]; }
+
+  Cell cells[10000]; // 100x100. Normal screen is 60x50.
+  int offsetx = -1;
+  int offsety = -1;
+  int width = 0;  // number of cells across which are filled in
+  int height = 0; // number of cells up which are filled in
+
+  void PrintGrid() const;
 };
