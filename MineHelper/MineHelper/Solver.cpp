@@ -1,18 +1,27 @@
 #include "stdafx.h"
 #include "Solver.h"
+#include <functional>
 
 void Solver::Solve(MineGrid &grid) {
 
-  auto SumNeighbours = [&](int x0, int y0) -> Neighbours {
-    Neighbours result;
+  auto ForEachNeighbour = [&](int x0, int y0,
+                              std::function<void(int x, int y)> f) {
     for (int y = y0 - 1; y <= y0 + 1; y++) {
       for (int x = x0 - 1; x <= x0 + 1; x++) {
-        bool bIsSelf = (x == x0 && y == y0);
-        result.mines += !bIsSelf && grid.GetCell(x, y) == MineGrid::Mine;
-        result.cleared += !bIsSelf && grid.GetCell(x, y) <= MineGrid::Clear8;
-        result.unknown += !bIsSelf && grid.GetCell(x, y) == MineGrid::Unclicked;
+        if (x == x0 && y == y0)
+          continue;
+        f(x, y);
       }
     }
+  };
+
+  auto SumNeighbours = [&](int x0, int y0) -> Neighbours {
+    Neighbours result;
+    ForEachNeighbour(x0, y0, [&](int x, int y) {
+      result.mines += grid.GetCell(x, y) == MineGrid::Mine;
+      result.cleared += grid.GetCell(x, y) <= MineGrid::Clear8;
+      result.unknown += grid.GetCell(x, y) == MineGrid::Unclicked;
+    });
     return result;
   };
 
