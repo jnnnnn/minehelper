@@ -12,11 +12,11 @@ void Outputter::Output(MineGrid &grid) {
       int ypx = y * GRID_SIZE + grid.offsety + GRID_SIZE / 2;
 
       if (grid.GetCell(x, y) == MineGrid::UnclickedClear) {
-		  overlay->DrawBox(xpx, ypx, 12, 0, 255, 0);
-		  //overlay->DrawBox(xpx, ypx, 13, 0, 255, 0);
+        overlay->DrawBox(xpx, ypx, 12, 0, 255, 0);
       } else if (grid.GetCell(x, y) == MineGrid::UnclickedMine) {
-		  overlay->DrawBox(xpx, ypx, 12, 255, 0, 0);
-		  //overlay->DrawBox(xpx, ypx, 13, 255, 0, 0);
+        overlay->DrawBox(xpx, ypx, 12, 255, 0, 0);
+      } else if (grid.GetCell(x, y) == MineGrid::UnclickedBorder) {
+        overlay->DrawBox(xpx, ypx, 12, 0, 0, 255);
       }
     }
   }

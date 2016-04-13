@@ -14,10 +14,6 @@ void MineGrid::PrintGrid() const {
         cout << "!";
       else if (cell == Unclicked)
         cout << ".";
-      else if (cell == ClickGreen)
-        cout << "L";
-      else if (cell == ClickRed)
-        cout << "R";
       else
         cout << "?";
     }

@@ -13,4 +13,8 @@ public:
   };
 
   static void Solve(MineGrid &grid);
+protected:
+	static void SimpleSolve(MineGrid & grid);
+	static void ForEachNeighbour(int x, int y, std::function<void(int x, int y)> f);
+	static Neighbours SumNeighbours(MineGrid &grid, int x0, int y0);
 };
