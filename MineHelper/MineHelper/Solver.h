@@ -10,6 +10,7 @@ public:
     BYTE mines = 0;
     BYTE cleared = 0;
     BYTE unclicked = 0;
+	BYTE notmines = 0;
   };
 
   static void Solve(MineGrid &grid);

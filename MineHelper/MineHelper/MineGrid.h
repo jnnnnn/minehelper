@@ -16,8 +16,8 @@ struct MineGrid {
     Clear7,
     Clear8,
     Mine,
-	UnclickedMine,
-	UnclickedClear,
+    UnclickedMine,
+    UnclickedClear,
     Unclicked,
     UnclickedBorder,
     Unknown,
@@ -32,8 +32,8 @@ struct MineGrid {
   }
   Cell GetCell(int x, int y) const { return cells[x * 100 + y]; }
   bool IsUnsolved(int x, int y) const {
-    Cell c = cells[x * 100 + y];
-	return c == Unclicked || c == UnclickedBorder;
+    Cell c = GetCell(x, y);
+    return c == Unclicked || c == UnclickedBorder;
   }
   Cell cells[10000]; // 100x100. Normal screen is 60x50.
   int offsetx = -1;
