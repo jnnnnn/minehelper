@@ -13,7 +13,7 @@ void Solver::SimpleSolve(MineGrid &grid) {
         auto neighbours = SumNeighbours(grid, x, y);
         MineGrid::Cell c = grid.GetCell(x, y);
         if (neighbours.unclicked > 0 && neighbours.unclicked < 8 &&
-            neighbours.cleared + neighbours.mines + neighbours.unclicked == 8) {
+            neighbours.notmines + neighbours.mines + neighbours.unclicked == 8) {
           if (neighbours.mines == c) {
             ForEachNeighbour(x, y, [&](int xn, int yn) {
               if (grid.IsUnsolved(xn, yn))
@@ -51,8 +51,10 @@ Solver::Neighbours Solver::SumNeighbours(MineGrid &grid, int x0, int y0) {
   ForEachNeighbour(x0, y0, [&](int x, int y) {
     MineGrid::Cell c = grid.GetCell(x, y);
     result.mines += c == MineGrid::Mine || c == MineGrid::UnclickedMine;
+    result.notmines += c <= MineGrid::Clear8 || c == MineGrid::UnclickedClear;
     result.cleared += c <= MineGrid::Clear8;
-    result.unclicked += grid.IsUnsolved(x, y);
+    result.unclicked +=
+        c == MineGrid::Unclicked || c == MineGrid::UnclickedBorder;
   });
   return result;
 }
