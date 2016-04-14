@@ -9,13 +9,15 @@ public:
   struct Neighbours {
     BYTE mines = 0;
     BYTE cleared = 0;
-    BYTE unclicked = 0;
-	BYTE notmines = 0;
+    BYTE unclickedUndetermined = 0;
+    BYTE unclickedMines = 0;
+    BYTE unclickedClear = 0;
   };
-
+  static void ForEachNeighbour(int x, int y,
+                               std::function<void(int x, int y)> f);
+  static Neighbours SumNeighbours(MineGrid &grid, int x0, int y0);
   static void Solve(MineGrid &grid);
+
 protected:
-	static void SimpleSolve(MineGrid & grid);
-	static void ForEachNeighbour(int x, int y, std::function<void(int x, int y)> f);
-	static Neighbours SumNeighbours(MineGrid &grid, int x0, int y0);
+  static void SimpleSolve(MineGrid &grid);
 };

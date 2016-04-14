@@ -2,6 +2,8 @@
 #include "Outputter.h"
 #include "Screen.h"
 
+#include "Solver.h"
+
 void Outputter::Output(MineGrid &grid) {
   shared_ptr<RawBitmap> overlay(new RawBitmap());
   overlay->Clear(grid.widthpx, grid.heightpx, 255);
@@ -11,11 +13,23 @@ void Outputter::Output(MineGrid &grid) {
       int xpx = x * GRID_SIZE + grid.offsetx + GRID_SIZE / 2;
       int ypx = y * GRID_SIZE + grid.offsety + GRID_SIZE / 2;
 
-      if (grid.GetCell(x, y) == MineGrid::UnclickedClear) {
+      MineGrid::CellValue c = grid.GetCell(x, y);
+      if (c <= MineGrid::Clear8) {
+        auto neighbours = Solver::SumNeighbours(grid, x, y);
+        if (neighbours.unclickedClear + neighbours.unclickedMines > 0) {
+          if (neighbours.mines == c)
+            overlay->DrawBox(xpx, ypx, 12, 128, 255, 128);
+          else if (neighbours.unclickedClear == 0 &&
+                   neighbours.unclickedUndetermined == 0)
+            overlay->DrawBox(xpx, ypx, 12, 255, 128, 128);
+        }
+      }
+
+      if (c == MineGrid::UnclickedClear) {
         overlay->DrawBox(xpx, ypx, 12, 0, 255, 0);
-      } else if (grid.GetCell(x, y) == MineGrid::UnclickedMine) {
+      } else if (c == MineGrid::UnclickedMine) {
         overlay->DrawBox(xpx, ypx, 12, 255, 0, 0);
-      } else if (grid.GetCell(x, y) == MineGrid::UnclickedBorder) {
+      } else if (c == MineGrid::UnclickedBorder) {
         overlay->DrawBox(xpx, ypx, 12, 0, 0, 255);
       }
     }

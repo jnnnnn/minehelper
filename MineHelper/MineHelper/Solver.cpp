@@ -11,15 +11,20 @@ void Solver::SimpleSolve(MineGrid &grid) {
     for (int x = 1; x < grid.width - 1; x++) {
       for (int y = 1; y < grid.height - 1; y++) {
         auto neighbours = SumNeighbours(grid, x, y);
-        MineGrid::Cell c = grid.GetCell(x, y);
-        if (neighbours.unclicked > 0 && neighbours.unclicked < 8 &&
-            neighbours.notmines + neighbours.mines + neighbours.unclicked == 8) {
-          if (neighbours.mines == c) {
+        MineGrid::CellValue c = grid.GetCell(x, y);
+        if (neighbours.unclickedUndetermined > 0 &&
+            neighbours.unclickedUndetermined < 8 &&
+            neighbours.cleared + neighbours.unclickedClear + neighbours.mines +
+                    neighbours.unclickedMines +
+                    neighbours.unclickedUndetermined ==
+                8) {
+          if (neighbours.mines + neighbours.unclickedMines == c) {
             ForEachNeighbour(x, y, [&](int xn, int yn) {
               if (grid.IsUnsolved(xn, yn))
                 grid.SetCell(xn, yn, MineGrid::UnclickedClear);
             });
-          } else if ((neighbours.unclicked + neighbours.mines) == c) {
+          } else if ((neighbours.unclickedUndetermined + neighbours.mines +
+                      neighbours.unclickedMines) == c) {
             ForEachNeighbour(x, y, [&](int xn, int yn) {
               if (grid.IsUnsolved(xn, yn))
                 grid.SetCell(xn, yn, MineGrid::UnclickedMine);
@@ -49,11 +54,12 @@ void Solver::ForEachNeighbour(int x, int y,
 Solver::Neighbours Solver::SumNeighbours(MineGrid &grid, int x0, int y0) {
   Neighbours result;
   ForEachNeighbour(x0, y0, [&](int x, int y) {
-    MineGrid::Cell c = grid.GetCell(x, y);
-    result.mines += c == MineGrid::Mine || c == MineGrid::UnclickedMine;
-    result.notmines += c <= MineGrid::Clear8 || c == MineGrid::UnclickedClear;
+    MineGrid::CellValue c = grid.GetCell(x, y);
+    result.mines += c == MineGrid::Mine;
+    result.unclickedMines += c == MineGrid::UnclickedMine;
+    result.unclickedClear += c == MineGrid::UnclickedClear;
     result.cleared += c <= MineGrid::Clear8;
-    result.unclicked +=
+    result.unclickedUndetermined +=
         c == MineGrid::Unclicked || c == MineGrid::UnclickedBorder;
   });
   return result;
@@ -64,7 +70,6 @@ void Solver::Solve(MineGrid &grid) {
   SimpleSolve(grid);
 
   // attempt brute force on the unsolved cells
-  typedef std::pair<short, short> CellCoord;
   typedef std::set<CellCoord> BorderGroup;
   BorderGroup borderCells;
   for (int x = 1; x < grid.width - 1; x++)
@@ -103,5 +108,8 @@ void Solver::Solve(MineGrid &grid) {
   }
 
   for (auto &group : borderGroups) {
+    for (auto &cellCoord : group) {
+
+    }
   }
 }

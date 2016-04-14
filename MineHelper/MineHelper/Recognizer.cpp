@@ -63,31 +63,34 @@ shared_ptr<MineGrid> Recognizer::Recognize(shared_ptr<RawBitmap> bitmap) {
   }
 
   cout << result->offsetx << ", " << result->offsety << "\r\n";
-  
+
   if (result->offsetx == -1)
-	  return result;
+    return result;
 
   // match each cell
   int width = (bitmap->Width - result->offsetx - 17) / GRID_SIZE;
   int height = (bitmap->Height - result->offsety - 15) / GRID_SIZE;
   for (int cellx = 0; cellx < width; cellx++) {
     for (int celly = 0; celly < height; celly++) {
-      int gray = bitmap->PosGray(cellx * GRID_SIZE + result->offsetx + 17,
-                                 celly * GRID_SIZE + result->offsety + 17);
+      int cellxpx = cellx * GRID_SIZE + result->offsetx;
+      int cellypy = celly * GRID_SIZE + result->offsety;
+      int gray = bitmap->PosGray(cellxpx + 17, cellypy + 17);
       /*
           bitmap->SavePartialBitmap("cell x.bmp",
                                 cellx * GRID_SIZE + result->offsetx,
-                                (cellx + 1) * GRID_SIZE + result->offsetx,
+                                (cellx + 1) * GRID_SIZE +
+         result->offsetx,
                                 celly * GRID_SIZE + result->offsety,
-                                (celly + 1) * GRID_SIZE + result->offsety);
+                                (celly + 1) * GRID_SIZE +
+         result->offsety);
       */
-      MineGrid::Cell cell;
+      MineGrid::CellValue cell;
       switch (gray) {
       case 219:
         cell = MineGrid::Unclicked;
         break;
       case 97:
-	  case 0:
+      case 0:
         cell = MineGrid::Mine;
         break;
       case 255:
@@ -106,7 +109,10 @@ shared_ptr<MineGrid> Recognizer::Recognize(shared_ptr<RawBitmap> bitmap) {
         cell = MineGrid::Clear4;
         break;
       case 68:
-        cell = MineGrid::Clear5;
+        if (bitmap->PosGray(cellxpx + 17, cellypy + 17) == 68)
+          cell = MineGrid::Clear5;
+        else
+          cell = MineGrid::Clear6;
         break;
       default:
         cell = MineGrid::Unknown;
