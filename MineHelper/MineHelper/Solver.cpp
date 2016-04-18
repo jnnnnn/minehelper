@@ -5,39 +5,6 @@
 #include <utility>
 #include <deque>
 
-// monkey solver
-void Solver::SimpleSolve(MineGrid &grid) {
-  for (int iterations = 0; iterations < 4; iterations++) {
-    for (int x = 1; x < grid.width - 1; x++) {
-      for (int y = 1; y < grid.height - 1; y++) {
-        auto neighbours = SumNeighbours(grid, x, y);
-        MineGrid::CellValue c = grid.GetCell(x, y);
-        if (neighbours.unclickedUndetermined > 0 &&
-            neighbours.unclickedUndetermined < 8 &&
-            neighbours.cleared + neighbours.unclickedClear + neighbours.mines +
-                    neighbours.unclickedMines +
-                    neighbours.unclickedUndetermined ==
-                8) {
-          if (neighbours.mines + neighbours.unclickedMines == c) {
-            ForEachNeighbour(x, y, [&](int xn, int yn) {
-              if (grid.IsUnsolved(xn, yn))
-                grid.SetCell(xn, yn, MineGrid::UnclickedClear);
-            });
-          } else if ((neighbours.unclickedUndetermined + neighbours.mines +
-                      neighbours.unclickedMines) == c) {
-            ForEachNeighbour(x, y, [&](int xn, int yn) {
-              if (grid.IsUnsolved(xn, yn))
-                grid.SetCell(xn, yn, MineGrid::UnclickedMine);
-            });
-          } else if (grid.IsUnsolved(x, y) && neighbours.cleared > 0) {
-            grid.SetCell(x, y, MineGrid::UnclickedBorder);
-          }
-        }
-      }
-    }
-  }
-}
-
 void Solver::ForEachNeighbour(int x, int y,
                               std::function<void(int x, int y)> f) {
   f(x - 1, y - 1);
@@ -51,23 +18,13 @@ void Solver::ForEachNeighbour(int x, int y,
   f(x + 1, y + 1);
 }
 
-Solver::Neighbours Solver::SumNeighbours(MineGrid &grid, int x0, int y0) {
-  Neighbours result;
-  ForEachNeighbour(x0, y0, [&](int x, int y) {
-    MineGrid::CellValue c = grid.GetCell(x, y);
-    result.mines += c == MineGrid::Mine;
-    result.unclickedMines += c == MineGrid::UnclickedMine;
-    result.unclickedClear += c == MineGrid::UnclickedClear;
-    result.cleared += c <= MineGrid::Clear8;
-    result.unclickedUndetermined +=
-        c == MineGrid::Unclicked || c == MineGrid::UnclickedBorder;
-  });
-  return result;
-}
-
 void Solver::Solve(MineGrid &grid) {
   // Get the easy stuff out of the way
-  SimpleSolve(grid);
+  for (int i = 0; i < 5; i++) {
+    SolveResult r = SimpleSolve(grid, 1, grid.width - 2, 1, grid.height - 2);
+    if (r != Solver::Valid)
+      break;
+  }
 
   // attempt brute force on the unsolved cells
   typedef std::set<CellCoord> BorderGroup;
@@ -107,9 +64,42 @@ void Solver::Solve(MineGrid &grid) {
     borderGroups.push_back(group);
   }
 
+  //return;
+
   for (auto &group : borderGroups) {
     for (auto &cellCoord : group) {
+      // add a mine, extrapolate 3 times, check validity
+      ModifiedGrid g(grid);
+      g.SetCell(cellCoord.first, cellCoord.second, MineGrid::UnclickedMine);
 
+      for (int i = 0; i < 3; i++) {
+        SolveResult r =
+            SimpleSolve(g, max(1, cellCoord.first - 1 - 2 * i),
+                        min(grid.width - 2, cellCoord.first + 1 + 2 * i),
+                        max(1, cellCoord.second - 1 - 2 * i),
+                        min(grid.height - 2, cellCoord.second + 1 + 2 * i));
+        if (r == Solver::Invalid)
+          grid.SetCell(cellCoord.first, cellCoord.second,
+                       MineGrid::UnclickedClear);
+        if (r == Solver::NoChanges)
+          break;
+      }
+      // add a clear space, extrapolate 3 times, check validity
+      ModifiedGrid g2(grid);
+      g2.SetCell(cellCoord.first, cellCoord.second, MineGrid::UnclickedClear);
+
+      for (int i = 0; i < 3; i++) {
+        SolveResult r =
+            SimpleSolve(g2, max(1, cellCoord.first - 1 - 2 * i),
+                        min(grid.width - 2, cellCoord.first + 1 + 2 * i),
+                        max(1, cellCoord.second - 1 - 2 * i),
+                        min(grid.height - 2, cellCoord.second + 1 + 2 * i));
+        if (r == Solver::Invalid)
+          grid.SetCell(cellCoord.first, cellCoord.second,
+                       MineGrid::UnclickedMine);
+        if (r == Solver::NoChanges)
+          break;
+      }
     }
   }
 }

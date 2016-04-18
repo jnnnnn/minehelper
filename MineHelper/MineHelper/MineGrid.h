@@ -1,12 +1,20 @@
 #pragma once
 
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 extern const int GRID_SIZE;
 
 typedef std::pair<short, short> CellCoord;
 typedef std::pair<short, short> BitmapCoord;
+
+namespace std {
+template <> struct hash<CellCoord> {
+  std::size_t operator()(const CellCoord &k) const {
+    return std::hash<int>()((k.first << (sizeof(short) * 8)) + k.second);
+  }
+};
+}
 
 struct MineGrid {
   enum CellValue {
@@ -34,10 +42,7 @@ struct MineGrid {
     }
   }
   CellValue GetCell(int x, int y) const { return cells[x * 100 + y]; }
-  bool IsUnsolved(int x, int y) const {
-    CellValue c = GetCell(x, y);
-    return c == Unclicked || c == UnclickedBorder;
-  }
+
   CellValue cells[10000]; // 100x100. Normal screen is 60x50.
   int offsetx = -1;
   int offsety = -1;
@@ -52,11 +57,14 @@ struct MineGrid {
 struct ModifiedGrid {
   ModifiedGrid(const MineGrid &baseGrid) : baseGrid(baseGrid) {}
   const MineGrid &baseGrid;
-  std::map<std::pair<int, int>, MineGrid::CellValue> modifiedCells;
+  std::unordered_map<std::pair<short, short>, MineGrid::CellValue>
+      modifiedCells;
 
   bool IsModified() { return modifiedCells.size() > 0; }
 
-  void SetCell(int x, int y, MineGrid::CellValue v) { modifiedCells[{x, y}] = v; }
+  void SetCell(int x, int y, MineGrid::CellValue v) {
+    modifiedCells[{x, y}] = v;
+  }
 
   MineGrid::CellValue GetCell(int x, int y) const {
     auto it = modifiedCells.find({x, y});
