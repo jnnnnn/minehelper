@@ -68,7 +68,7 @@ void Solver::Solve(MineGrid &grid) {
 
   for (auto &group : borderGroups) {
     for (auto &cellCoord : group) {
-      // add a mine, extrapolate 3 times, check validity
+      // add a mine, extrapolate 2 times, check validity
       ModifiedGrid g(grid);
       g.SetCell(cellCoord.first, cellCoord.second, MineGrid::UnclickedMine);
 
@@ -84,11 +84,11 @@ void Solver::Solve(MineGrid &grid) {
         if (r == Solver::NoChanges)
           break;
       }
-      // add a clear space, extrapolate 3 times, check validity
+      // add a clear space, extrapolate 3 times, checking validity
       ModifiedGrid g2(grid);
       g2.SetCell(cellCoord.first, cellCoord.second, MineGrid::UnclickedClear);
 
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < 2; i++) {
         SolveResult r =
             SimpleSolve(g2, max(1, cellCoord.first - 1 - 2 * i),
                         min(grid.width - 2, cellCoord.first + 1 + 2 * i),
