@@ -72,7 +72,7 @@ void Solver::Solve(MineGrid &grid) {
       ModifiedGrid g(grid);
       g.SetCell(cellCoord.first, cellCoord.second, MineGrid::UnclickedMine);
 
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < 2; i++) {
         SolveResult r =
             SimpleSolve(g, max(1, cellCoord.first - 1 - 2 * i),
                         min(grid.width - 2, cellCoord.first + 1 + 2 * i),
