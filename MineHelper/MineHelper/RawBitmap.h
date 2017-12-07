@@ -35,6 +35,14 @@ struct RawBitmap {
     }
   }
 
+  void DrawSolid(int cx, int cy, int radius, int r, int g, int b) {
+    for (int x = cx - radius; x < cx + radius; x++) {
+      for (int y = cy - radius; y < cy + radius; y++) {
+        SetPx(x, y, r, g, b);
+      }
+    }
+  }
+
   void SetPx(int x, int y, int r, int g, int b) {
     SetB(x, y, b);
     SetG(x, y, g);

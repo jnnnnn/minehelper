@@ -21,7 +21,7 @@ public:
   static void Solve(MineGrid &grid);
 
   template <typename TGrid>
-  static Neighbours Solver::SumNeighbours(TGrid &grid, int x0, int y0) {
+  static Neighbours SumNeighbours(TGrid &grid, int x0, int y0) {
     Neighbours result;
     ForEachNeighbour(x0, y0, [&](int x, int y) {
       MineGrid::CellValue c = grid.GetCell(x, y);

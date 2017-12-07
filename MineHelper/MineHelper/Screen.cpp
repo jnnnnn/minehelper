@@ -13,7 +13,7 @@ shared_ptr<RawBitmap> Screen::GetScreenBitmap() {
               (LPVOID)NULL, (DWORD)(2000 + 2), MEM_COMMIT, PAGE_READWRITE);
           ::GetWindowTextW(hwnd, lpString, 1000);
           wstring sWindowText = wstring((wchar_t *)(lpString));
-          const wregex re_chrome(_T("(.i.e.ie...........a..i.e....u..i..a.e..O..i.e..i.e..ee.e.)"));
+          const wregex re_chrome(_T("(.i.e.ie......e..e....i.e..ee.e...a.e...e.)"));
           wsmatch match;
           if (regex_search(sWindowText, match, re_chrome) && match.size() > 1) {
             hwndTarget = hwnd;

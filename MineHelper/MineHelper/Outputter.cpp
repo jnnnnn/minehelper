@@ -17,13 +17,14 @@ void Outputter::Output(MineGrid &grid) {
       if (c <= MineGrid::Clear8) {
         auto neighbours = Solver::SumNeighbours(grid, x, y);
         if (neighbours.unclickedClear + neighbours.unclickedMines > 0) {
-          if (neighbours.mines == c)
-            overlay->DrawBox(xpx, ypx, 12, 128, 255, 128);
-          else if (neighbours.unclickedClear == 0 &&
-                   neighbours.unclickedUndetermined == 0)
-            overlay->DrawBox(xpx, ypx, 12, 255, 128, 128);
+          if (neighbours.mines == c) {
+            overlay->DrawSolid(xpx, ypx, 12, 0, 200, 0);
+          } else if (neighbours.unclickedClear == 0 &&
+                     neighbours.unclickedUndetermined == 0) {
+            overlay->DrawSolid(xpx, ypx, 12, 200, 0, 0);
+          }
         }
-      }
+      }	
 
       if (c == MineGrid::UnclickedClear) {
         overlay->DrawBox(xpx, ypx, 12, 0, 255, 0);
